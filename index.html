@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="home.css">
+	<script src="https://maps.googleapis.com/maps/api/js"></script>
+	<script>
+		$(window).load(function() {
+			alert("(window).load was called - window is loaded!");
+		    // Construct the catalog query string
+		    url = 'https://data.sfgov.org/resource/rqzj-sfat.json';
+
+		    // Intialize our map
+		    var center = new google.maps.LatLng(37.7577,-122.4376);
+		    var mapOptions = {
+		      zoom: 12,
+		      center: center
+		    }
+		    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+		    // Retrieve our data and plot it
+		    $.getJSON(url, function(data, textstatus) {
+		          console.log(data);
+		          $.each(data, function(i, entry) {
+		              var marker = new google.maps.Marker({
+		                  position: new google.maps.LatLng(entry.location.latitude, 
+		                                                   entry.location.longitude),
+		                  map: map,
+		                  title: location.name
+		              });
+		          });
+		    });
+		});
+		
+	</script>
+	
+	</head>
+	
+  <title>SAN FRANCISCO FOOD TRUCKS</title>
+  <body>
+	
+	<button type="button"
+	onclick="document.getElementById('demo').innerHTML = Date()">
+	Click me to display Date and Time.</button>
+	<p id="demo">JS can change HTML content.</p>
+	
+	<p>He named his car <i>The lightning</i>, because it was very fast.1</p>
+	<a href="http://www.apple.com">apple</a>
+    <div id="map"></div>
+  </body>
+</html>

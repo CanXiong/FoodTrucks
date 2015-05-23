@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#btn1").click(function(){
+        alert($('p').text());
+    });
+    $("#btn2").click(function(){
+        alert($('.class1').html());
+    });
+	$("#btn3").click(function(){
+        alert($('#id1').html());
+    });
+});
+
+// // blist-td blist-t1-c204910935
+// $(".blist-td blist-t1-c204910935 ").load("https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sfat?",function(data){
+// 	
+// 	var value=$(data).find(".blist-td blist-t1-c204910935 ").val();
+// 	echo value;
+// });
+
+</script>
+</head>
+<body>
+
+	<h1>jQuery Get Tag Value</h1>
+
+	    <p>
+	    	This is paragrah 1
+	    </p>
+
+		<div class="class1">
+			This is class='class1'
+		</div>
+
+		<div id="id1">
+			This is id='id1'
+		</div>
+
+<button id="btn1">Show Paragraph</button>
+<button id="btn2">Show Class</button>
+<button id="btn3">Show ID</button>
+
+</body>
+</html>
