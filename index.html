@@ -1,50 +1,82 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
 	<link rel="stylesheet" type="text/css" href="home.css">
-	<script src="https://maps.googleapis.com/maps/api/js"></script>
-	<script>
-		$(window).load(function() {
-			alert("(window).load was called - window is loaded!");
-		    // Construct the catalog query string
-		    url = 'https://data.sfgov.org/resource/rqzj-sfat.json';
+    <title>Place Autocomplete</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
 
-		    // Intialize our map
-		    var center = new google.maps.LatLng(37.7577,-122.4376);
-		    var mapOptions = {
-		      zoom: 12,
-		      center: center
-		    }
-		    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
 
-		    // Retrieve our data and plot it
-		    $.getJSON(url, function(data, textstatus) {
-		          console.log(data);
-		          $.each(data, function(i, entry) {
-		              var marker = new google.maps.Marker({
-		                  position: new google.maps.LatLng(entry.location.latitude, 
-		                                                   entry.location.longitude),
-		                  map: map,
-		                  title: location.name
-		              });
-		          });
-		    });
-		});
-		
-	</script>
-	
-	</head>
-	
-  <title>SAN FRANCISCO FOOD TRUCKS</title>
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+	<script 
+src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="map.js"></script>
+
+  </head>
   <body>
-	
-	<button type="button"
-	onclick="document.getElementById('demo').innerHTML = Date()">
-	Click me to display Date and Time.</button>
-	<p id="demo">JS can change HTML content.</p>
-	
-	<p>He named his car <i>The lightning</i>, because it was very fast.1</p>
-	<a href="http://www.apple.com">apple</a>
-    <div id="map"></div>
+	<p>SAN FRANCISCO FOOD TRUCKS</p>
+    <input id="pac-input" class="controls" type="text"
+        placeholder="Enter a location">
+    <div id="type-selector" class="controls">
+      <input type="radio" name="type" id="changetype-all" checked="checked">
+      <label for="changetype-all">All</label>
+
+      <input type="radio" name="type" id="changetype-establishment">
+      <label for="changetype-establishment">Establishments</label>
+
+      <input type="radio" name="type" id="changetype-address">
+      <label for="changetype-address">Addresses</label>
+
+      <input type="radio" name="type" id="changetype-geocode">
+      <label for="changetype-geocode">Geocodes</label>
+    </div>
+    <div id="map-canvas"></div>
   </body>
 </html>
