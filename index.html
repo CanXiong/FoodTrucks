@@ -17,9 +17,8 @@ src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<div>
 		<table border="0" width="100%">
 			<tr>
-				
 				<td><span id="set-range">SET YOUR SEARCH RANGE IN
-				<input type="number" id="range" value="1" onkeypress="setRange(event)">&nbsp;KM</span>
+				<input type="number" id="range" value="1" onchange="setRange()">&nbsp;MILES</span>
 				<td align="right"><img id="ft" src="images/food-truck.png"></td>    
 		</tr>
 		</table>	
@@ -28,18 +27,19 @@ src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <input id="pac-input" class="controls" type="text"
         placeholder="Enter a location">
     <div id="type-selector" class="controls">
-      <input type="radio" name="type" id="changetype-all" checked="checked">
-      <label for="changetype-all">All</label>
+      <input type="radio" name="type" id="Car" value="DRIVING" checked="checked">
+      <label for="car">Car</label>
 
-      <input type="radio" name="type" id="changetype-establishment">
-      <label for="changetype-establishment">Establishments</label>
+      <input type="radio" name="type" id="Transit" value="TRANSIT">
+      <label for="transit">Transit</label>
 
-      <input type="radio" name="type" id="changetype-address">
-      <label for="changetype-address">Addresses</label>
+      <input type="radio" name="type" id="Bicycle" value="BICYCLING">
+      <label for="bicycle">Bicycle</label>
 
-      <input type="radio" name="type" id="changetype-geocode">
-      <label for="changetype-geocode">Geocodes</label>
+      <input type="radio" name="type" id="Walk" value="WALKING">
+      <label for="walk">Walk</label>
     </div>
+
     <div id="map-canvas"></div>
   </body>
 </html>

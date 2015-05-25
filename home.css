@@ -57,8 +57,8 @@ html, body, #map-canvas {/* id selector -- grouping selectors*/
 	font-family: Arial, Helvetica, sans-serif;
 }
 #ft {
-	width:100px;
-	height:50px;
+	width:120px;
+	height:60px;
 /*	margin-left: 10px;*/
 /*	margin-right: 200px;*/
 }
