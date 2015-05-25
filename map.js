@@ -2,7 +2,11 @@
 var map;
 var markersArray = []; // global markers containers
 var selectedMarkerId = 0;
-var range = 2;
+var range = 1;
+var place; // user placed location
+
+var directionsDisplay;
+var directionsService = new google.maps.DirectionsService();
 
 $(window).load(function() {
 	var mapOptions = {
@@ -10,6 +14,9 @@ $(window).load(function() {
 		zoom: 13
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+	directionsDisplay = new google.maps.DirectionsRenderer();
+	directionsDisplay.setMap(map);
 
 	var input = /** @type {HTMLInputElement} */
 	(document.getElementById('pac-input'));
@@ -34,7 +41,7 @@ $(window).load(function() {
 		marker.setVisible(false);
 		clearMarkers();
 		
-		var place = autocomplete.getPlace();
+		place = autocomplete.getPlace();
 		if (!place.geometry) {
 			window.alert("Autocomplete's returned place contains no geometry");
 			return;
@@ -45,7 +52,7 @@ $(window).load(function() {
 			map.fitBounds(place.geometry.viewport);
 		} else {
 			map.setCenter(place.geometry.location);
-			map.setZoom(14); // Why 17? Because it looks good.
+			map.setZoom(17); // Why 17? Because it looks good.
 		}
 		marker.setIcon( /** @type {google.maps.Icon} */ ({
 			url: place.icon,
@@ -66,7 +73,7 @@ $(window).load(function() {
 		infowindow.open(map,marker);
 
 
-		setMarkers(infowindow, place);
+		setMarkers(infowindow);
 	});
 
 
@@ -86,6 +93,23 @@ $(window).load(function() {
 
 });
 
+
+function calcRoute(end) {
+	var start = place.geometry.location; // "San Francisco";
+	var end = markersArray[selectedMarkerId].position; // document.getElementById('end').value;
+	// console.log("start: "+start.lat() + ", " + start.lng() + " --- end: " + end.lat() + ", " + end.lng());
+  var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    }
+  });
+}
+
 function setRange(e) {
 	var key=e.keyCode || e.which;
 	if(key == 13) // enter
@@ -93,7 +117,7 @@ function setRange(e) {
 	console.log("setRange: "+range);
 }
 
-// Check food truck location is within 3.5km around search location or not.
+// Check food truck location is within 1km (default) around search location or not.
 function withinRange(entry, place) {
 	// console.log("entry: "+entry.location.latitude + ", " + entry.location.longitude + " --- place: " + place.geometry.location);
 	var p1 = new google.maps.LatLng(entry.location.latitude, entry.location.longitude);
@@ -115,7 +139,7 @@ function clearMarkers() {
 	}
 }
 
-function setMarkers(infowindow, place) {
+function setMarkers(infowindow) {
 	var pinIcon = new google.maps.MarkerImage(
 	    "images/pin-1.png",
 	    null, /* size is determined at runtime */
@@ -132,16 +156,20 @@ function setMarkers(infowindow, place) {
 		// console.log(data);
 		var i = 0;
 		$.each(data, function(i, entry) {
+			
 			if(entry != undefined && entry.location != undefined && entry.status != "EXPIRED" && withinRange(entry, place)) {
 				nothingFound = false;
 				var items = typeof entry.fooditems == 'string' ? entry.fooditems.split(':').join(', ') : '';	
+				var start = place.geometry.location;
+				var end = new google.maps.LatLng(entry.location.latitude, entry.location.longitude);
+
 				var marker = new google.maps.Marker({
 					position: new google.maps.LatLng(entry.location.latitude, entry.location.longitude),
 					animation: google.maps.Animation.DROP,
 					icon: pinIcon,
 					map: map,
 					title: location.name,
-					details: '<div><strong>' + entry.applicant + '</strong><br>' + entry.address + '<br><i>' + items + '</i>'
+					details: '<div><strong>' + entry.applicant + '</strong><br>' + entry.address + '<br><i>' + items + '</i><br>' + '<button onclick="calcRoute('+ end+ ')">Direction to here</button>'
 				});
 				markersArray[i++] = marker; // Add to global container for future clearance
 
