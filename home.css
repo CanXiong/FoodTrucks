@@ -6,7 +6,7 @@ width: 800px
 html, body, #map-canvas {/* id selector -- grouping selectors*/
 	height: 100%;
 	margin: 0px;
-	padding: 0px
+	padding: 0px;
 }
 .controls {/* class selector */
 	margin-top: 16px;
@@ -17,6 +17,17 @@ html, body, #map-canvas {/* id selector -- grouping selectors*/
 	height: 32px;
 	outline: none;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.travel-modes {
+	width: 20px;
+	height: 20px;
+	padding: 0 30px 0 30px;
+}
+
+#Car, #Transit, #Bicycle, #Walk {
+	position: absolute;
+	padding: 0 2px 0 8px;
 }
 
 #pac-input {
@@ -40,7 +51,7 @@ html, body, #map-canvas {/* id selector -- grouping selectors*/
 
 #type-selector {
 	color: #fff;
-	background-color: #4d90fe;
+	background-color: #FFFFFF;
 	padding: 5px 11px 0px 11px;
 }
 
@@ -66,7 +77,7 @@ html, body, #map-canvas {/* id selector -- grouping selectors*/
 	display: inline-block;
 	text-indent: 5px;
 	color: black;
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: bold;
 	font-family: Arial, Helvetica, sans-serif;
 }

@@ -40,6 +40,13 @@ $(window).load(function() {
 		infowindow.close();
 		marker.setVisible(false);
 		clearMarkers();
+		// Clear direction display
+		if(directionsDisplay != null) {
+		    directionsDisplay.setMap(null);
+		    directionsDisplay = null;
+		}
+		directionsDisplay = new google.maps.DirectionsRenderer();
+		directionsDisplay.setMap(map);
 
 		place = autocomplete.getPlace();
 		if (!place.geometry) {
@@ -166,7 +173,7 @@ function setMarkers(infowindow) {
 					icon: pinIcon,
 					map: map,
 					title: location.name,
-					details: '<div><strong>' + entry.applicant + '</strong><br>' + entry.address + '<br><i>' + items + '</i><br>' + '<button onclick="calcRoute(' + end + ')">Direction to here</button>'
+					details: '<div><strong>' + entry.applicant + '</strong><br>' + entry.address + '<br><i>' + items + '</i><br>' + '<button style=\"background-color:#83D6FF\" onclick="calcRoute(' + end + ') ">Direction to here</button>'
 				});
 				markersArray[i++] = marker; // Add to global container for future clearance
 				google.maps.event.addListener(marker, 'click', function() {
@@ -183,12 +190,14 @@ function setMarkers(infowindow) {
 				});
 			}
 		});
-		if (nothingFound == true) alert("Sorry, we didn't find any food trucks around you.\nWe only supports search within SF.");
+		if (nothingFound == true) 
+			alert("Sorry, we didn't find any food trucks around you.\nWe only supports the services within SF.");
 	});
 
 }
 
 function changeIcon(pinIcon) {
+	console.log("changeIcon, selectedMarkerId: " + selectedMarkerId);
 	pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
 	null, /* origin is 0,0 */
 	null, /* anchor is bottom center of the scaled image */
