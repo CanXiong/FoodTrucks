@@ -61,7 +61,13 @@ src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
   </head>
   <body>
-	<p>SAN FRANCISCO FOOD TRUCKS</p>
+	<h1><span id="title">SAN FRANCISCO FOOD TRUCKS </span></h1>
+	<img id="ft" src="images/food-truck.png">
+	<div>
+		<h2><span id="set-range">SET YOUR SEARCH RANGE IN KM</span></h2>
+		<input type="number" id="range" value="2" onkeypress="setRange(event)">
+		</div>
+	
     <input id="pac-input" class="controls" type="text"
         placeholder="Enter a location">
     <div id="type-selector" class="controls">

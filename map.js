@@ -1,12 +1,15 @@
+
+var map;
 var markersArray = []; // global markers containers
 var selectedMarkerId = 0;
+var range = 2;
 
 $(window).load(function() {
 	var mapOptions = {
 		center: new google.maps.LatLng(37.7577, -122.4376),
 		zoom: 13
 	};
-	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 	var input = /** @type {HTMLInputElement} */
 	(document.getElementById('pac-input'));
@@ -60,11 +63,10 @@ $(window).load(function() {
 		}
 
 		infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-		infowindow.open(map, marker);
+		infowindow.open(map,marker);
 
 
-		setMarkers(map, infowindow, place);
-		
+		setMarkers(infowindow, place);
 	});
 
 
@@ -84,7 +86,14 @@ $(window).load(function() {
 
 });
 
-// Check food truck location is within 20km around search location or not.
+function setRange(e) {
+	var key=e.keyCode || e.which;
+	if(key == 13) // enter
+		range = document.getElementById("range").value;
+	console.log("setRange: "+range);
+}
+
+// Check food truck location is within 3.5km around search location or not.
 function withinRange(entry, place) {
 	// console.log("entry: "+entry.location.latitude + ", " + entry.location.longitude + " --- place: " + place.geometry.location);
 	var p1 = new google.maps.LatLng(entry.location.latitude, entry.location.longitude);
@@ -93,17 +102,20 @@ function withinRange(entry, place) {
 	var distance = (google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2);
 	
 	// console.log(distance);	
-	return distance <= 5;
+	return distance <= range;
 }
 
 function clearMarkers() {
-	for(var i=0; i<markersArray.length; i++) {
-		markersArray[i].setMap(null);
+	if(markersArray.length != 0 ) {
+		for(var i=0; i<markersArray.length; i++) {
+			if(typeof markersArray[i] == 'object') 
+				markersArray[i].setMap(null);
+		}
+		markersArray.length = 0;
 	}
-	markersArray.length = 0;
 }
 
-function setMarkers(map, infowindow, place) {
+function setMarkers(infowindow, place) {
 	var pinIcon = new google.maps.MarkerImage(
 	    "images/pin-1.png",
 	    null, /* size is determined at runtime */
@@ -112,15 +124,17 @@ function setMarkers(map, infowindow, place) {
 	    new google.maps.Size(20, 30)
 	);
 	
+	var nothingFound = true;
 	// Construct the catalog query string
 	url = 'https://data.sfgov.org/resource/rqzj-sfat.json';
 	// Retrieve our data and plot it
 	$.getJSON(url, function(data, textstatus) {
-		console.log(data);
+		// console.log(data);
 		var i = 0;
 		$.each(data, function(i, entry) {
-			if(entry.location != undefined && entry.status != "EXPIRED" && withinRange(entry, place)) {
-				var items = entry.fooditems.split(':').join(', ');
+			if(entry != undefined && entry.location != undefined && entry.status != "EXPIRED" && withinRange(entry, place)) {
+				nothingFound = false;
+				var items = typeof entry.fooditems == 'string' ? entry.fooditems.split(':').join(', ') : '';	
 				var marker = new google.maps.Marker({
 					position: new google.maps.LatLng(entry.location.latitude, entry.location.longitude),
 					animation: google.maps.Animation.DROP,
@@ -147,7 +161,10 @@ function setMarkers(map, infowindow, place) {
 				});
 			}
 		});
+		if (nothingFound == true)
+			alert("Sorry, we didn't find any food trucks around you.\nWe only supports search within SF.");
 	});
+	
 }
 
 function changeIcon(pinIcon) {
