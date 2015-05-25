@@ -5,55 +5,6 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="home.css">
-    <style>
-      html, body, #map-canvas {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
-      }
-      .controls {
-        margin-top: 16px;
-        border: 1px solid transparent;
-        border-radius: 2px 0 0 2px;
-        box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        height: 32px;
-        outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      }
-
-      #pac-input {
-        background-color: #fff;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 300;
-        margin-left: 12px;
-        padding: 0 11px 0 13px;
-        text-overflow: ellipsis;
-        width: 400px;
-      }
-
-      #pac-input:focus {
-        border-color: #4d90fe;
-      }
-
-      .pac-container {
-        font-family: Roboto;
-      }
-
-      #type-selector {
-        color: #fff;
-        background-color: #4d90fe;
-        padding: 5px 11px 0px 11px;
-      }
-
-      #type-selector label {
-        font-family: Roboto;
-        font-size: 13px;
-        font-weight: 300;
-      }
-
-    </style>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=geometry,places"></script>
 	<script 
 src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -61,11 +12,17 @@ src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
   </head>
   <body>
-	<h1><span id="title">SAN FRANCISCO FOOD TRUCKS </span></h1>
-	<img id="ft" src="images/food-truck.png">
+	<h1 style="text-align:center;" id="title">SAN FRANCISCO FOOD TRUCKS</h1>
+
 	<div>
-		<h2><span id="set-range">SET YOUR SEARCH RANGE IN KM</span></h2>
-		<input type="number" id="range" value="1" onkeypress="setRange(event)">
+		<table border="0" width="100%">
+			<tr>
+				
+				<td><span id="set-range">SET YOUR SEARCH RANGE IN
+				<input type="number" id="range" value="1" onkeypress="setRange(event)">&nbsp;KM</span>
+				<td align="right"><img id="ft" src="images/food-truck.png"></td>    
+		</tr>
+		</table>	
 		</div>
 	
     <input id="pac-input" class="controls" type="text"

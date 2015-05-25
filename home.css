@@ -3,7 +3,7 @@ height: 500px;
 width: 800px
 }
 */
-html, body, #map {/* id selector -- grouping selectors*/
+html, body, #map-canvas {/* id selector -- grouping selectors*/
 	height: 100%;
 	margin: 0px;
 	padding: 0px
@@ -57,32 +57,36 @@ html, body, #map {/* id selector -- grouping selectors*/
 	font-family: Arial, Helvetica, sans-serif;
 }
 #ft {
-	width:200px;
-	height:100px;
-	margin-left: 700px;
-	margin-right: 200px;
+	width:100px;
+	height:50px;
+/*	margin-left: 10px;*/
+/*	margin-right: 200px;*/
 }
 #set-range {
 	display: inline-block;
-	text-indent: 50px;
+	text-indent: 5px;
 	color: black;
-	font-size: 20px;
-	font-weight: normal;
+	font-size: 12px;
+	font-weight: bold;
 	font-family: Arial, Helvetica, sans-serif;
 }
 #range {
 	display: inline-block;
-	text-indent: 50px;
+	text-indent: 5px;
 	color: black;
-	
-	margin-top: 16px;
+
 	border: 1px solid transparent;
 	border-radius: 2px 0 0 2px;
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
-	height: 32px;
+	width:50px;
+/*	height: 25px;*/
 	outline: none;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 	
 	font-family: Roboto;
+}
+
+#range:focus {
+	border-color: #4d90fe;
 }
