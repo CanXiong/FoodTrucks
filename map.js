@@ -119,10 +119,8 @@ function calcRoute(end) {
 }
 
 function setRange() {
-	// var key = e.keyCode || e.which;
-	// 	if (key == 13) // enter
 	range = document.getElementById("range").value;
-	console.log("setRange: " + range);
+	//console.log("setRange: " + range);
 }
 
 // Check food truck location is within 1 miles (default) around search location or not.
@@ -197,7 +195,7 @@ function setMarkers(infowindow) {
 }
 
 function changeIcon(pinIcon) {
-	console.log("changeIcon, selectedMarkerId: " + selectedMarkerId);
+	//console.log("changeIcon, selectedMarkerId: " + selectedMarkerId);
 	pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
 	null, /* origin is 0,0 */
 	null, /* anchor is bottom center of the scaled image */
