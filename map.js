@@ -1,13 +1,21 @@
+/*************************************************************/
+// Global Variables
+/*************************************************************/
 var map;
 var markersArray = []; // global markers containers
 var selectedMarkerId = -1;
 var range = 1; // default search radius is 1 mile
 var place; // user placed location
-/**** Route ****/
-var directionsDisplay;
+
+var directionsDisplay; // used for routing
 var directionsService = new google.maps.DirectionsService();
 var travelWay = google.maps.TravelMode.DRIVING;
 
+/*************************************************************/
+// Window Load
+// Set up map, direction display, 
+// and listeners for autocomplete & travel mode selections
+/*************************************************************/
 $(window).load(function() {
 	var mapOptions = {
 		center: new google.maps.LatLng(37.7577, -122.4376),
@@ -41,9 +49,9 @@ $(window).load(function() {
 		marker.setVisible(false);
 		clearMarkers();
 		// Clear direction display
-		if(directionsDisplay != null) {
-		    directionsDisplay.setMap(null);
-		    directionsDisplay = null;
+		if (directionsDisplay != null) {
+			directionsDisplay.setMap(null);
+			directionsDisplay = null;
 		}
 		directionsDisplay = new google.maps.DirectionsRenderer();
 		directionsDisplay.setMap(map);
@@ -73,18 +81,27 @@ $(window).load(function() {
 
 		var address = '';
 		if (place.address_components) {
-			address = [(place.address_components[0] && place.address_components[0].short_name || ''), (place.address_components[1] && place.address_components[1].short_name || ''), (place.address_components[2] && place.address_components[2].short_name || '')].join(' ');
+			address = [
+			(place.address_components[0] && place.address_components[0].short_name || ''), 
+			(place.address_components[1] && place.address_components[1].short_name || ''), 
+			(place.address_components[2] && place.address_components[2].short_name || '')
+			].join(' ');
 		}
-
+		
+		// Display the user input location info window
 		infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
 		infowindow.open(map, marker);
 
-
+		// Found food trucks around you
 		setMarkers(infowindow);
 	});
 
+	setupClickListener('Car');
+	setupClickListener('Transit');
+	setupClickListener('Bicycle');
+	setupClickListener('Walk');
 
-	// Sets a listener on a radio button to change the travel mode.
+	// Set a listener on each radio button for different travel modes.
 	function setupClickListener(id) {
 		var radioButton = document.getElementById(id);
 		google.maps.event.addDomListener(radioButton, 'click', function() {
@@ -93,23 +110,19 @@ $(window).load(function() {
 			travelWay = google.maps.TravelMode[selectedMode];
 		});
 	}
-
-	setupClickListener('Car');
-	setupClickListener('Transit');
-	setupClickListener('Bicycle');
-	setupClickListener('Walk');
-
 });
 
-function calcRoute(end) {
-	// console.log("Calculate Route ...");
-	var start = place.geometry.location; // "San Francisco";
-	var end = markersArray[selectedMarkerId].position; // document.getElementById('end').value;
-	// console.log("start: " + start.lat() + ", " + start.lng() + " --- end: " + end.lat() + ", " + end.lng());
+/*************************************************************/
+// Calculate route between the user location 
+// and the selected food truck location.
+/*************************************************************/
+function calcRoute() {
+	var start = place.geometry.location;
+	var end = markersArray[selectedMarkerId].position;
 	var request = {
 		origin: start,
 		destination: end,
-		travelMode: travelWay //google.maps.TravelMode.WALKING
+		travelMode: travelWay //google.maps.TravelMode.DRIVING
 	};
 	directionsService.route(request, function(response, status) {
 		if (status == google.maps.DirectionsStatus.OK) {
@@ -118,70 +131,95 @@ function calcRoute(end) {
 	});
 }
 
+/*************************************************************/
+// Set food trucks search range.
+/*************************************************************/
 function setRange() {
 	range = document.getElementById("range").value;
 	//console.log("setRange: " + range);
 }
 
-// Check food truck location is within 1 miles (default) around search location or not.
+/*************************************************************/
+// Check food truck location is within the range or not.
+// By default the range is 1 miles.
+/*************************************************************/
 function withinRange(entry, place) {
-	// console.log("entry: "+entry.location.latitude + ", " + entry.location.longitude + " --- place: " + place.geometry.location);
 	var p1 = new google.maps.LatLng(entry.location.latitude, entry.location.longitude);
 	var p2 = place.geometry.location;
-	//calculates distance between two points in km's
-	var distance = ((google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2)) * 0.621371;
-	
+	//calculates distance between two points in miles
+	var distance = 
+	((google.maps.geometry.spherical.computeDistanceBetween(p1, p2) / 1000).toFixed(2)) * 0.621371;
 	// console.log(distance);	
 	return distance <= range;
 }
 
+/*************************************************************/
+// Clear all the food trucks markers, prepared for a new search.
+/*************************************************************/
 function clearMarkers() {
 	selectedMarkerId = -1;
 	if (markersArray.length != 0) {
 		for (var i = 0; i < markersArray.length; i++) {
-			if (typeof markersArray[i] == 'object') markersArray[i].setMap(null);
+			if (typeof markersArray[i] == 'object') 
+				markersArray[i].setMap(null);
 		}
 		markersArray.length = 0;
 	}
 }
 
+/*************************************************************/
+// Clear all the food trucks markers, prepared for a new search.
+/*************************************************************/
 function setMarkers(infowindow) {
-	var pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
-	null, /* origin is 0,0 */
-	null, /* anchor is bottom center of the scaled image */
-	new google.maps.Size(20, 30));
-
-	var nothingFound = true;
+	// Unselected pin icon is blue
+	var pinIcon = new google.maps.MarkerImage(
+		"images/pin-1.png", null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		null, /* anchor is bottom center of the scaled image */
+		new google.maps.Size(20, 30)
+	);
+	
+	// Boolean used to check found any food trucks around you or not
+	var nothingFound = true; 
+	
 	// Construct the catalog query string
 	url = 'https://data.sfgov.org/resource/rqzj-sfat.json';
+	
 	// Retrieve our data and plot it
 	$.getJSON(url, function(data, textstatus) {
 		// console.log(data);
 		var i = 0;
 		$.each(data, function(i, entry) {
 
-			if (entry != undefined && entry.location != undefined && entry.status != "EXPIRED" && withinRange(entry, place)) {
-				nothingFound = false;
+			if (entry != undefined && entry.location != undefined 
+				&& entry.status != "EXPIRED" && withinRange(entry, place)) {
+					
+				nothingFound = false; // Found some food trucks around you
+				
+				// Format the food trucks selling items
 				var items = typeof entry.fooditems == 'string' ? entry.fooditems.split(':').join(', ') : '';
+				
 				var start = place.geometry.location;
 				var end = new google.maps.LatLng(entry.location.latitude, entry.location.longitude);
 
 				var marker = new google.maps.Marker({
-					position: new google.maps.LatLng(entry.location.latitude, entry.location.longitude),
+					position: end,
 					animation: google.maps.Animation.DROP,
 					icon: pinIcon,
 					map: map,
 					title: location.name,
-					details: '<div><strong>' + entry.applicant + '</strong><br>' + entry.address + '<br><i>' + items + '</i><br>' + '<button style=\"background-color:#83D6FF\" onclick="calcRoute(' + end + ') ">Direction to here</button>'
+					details: '<div><strong>' + entry.applicant + '</strong><br>' 
+					+ entry.address + '<br><i>' + items + '</i><br>' 
+					+ '<button style=\"background-color:#83D6FF\" onclick="calcRoute() ">Direction to here</button>'
 				});
-				markersArray[i++] = marker; // Add to global container for future clearance
+				markersArray[i++] = marker; // Add to global markers container
+				
+				// Each Marker's click listener for info window displaying
 				google.maps.event.addListener(marker, 'click', function() {
 					changeIcon(pinIcon); // Switch marker from selected to unselect
-					pinIcon = new google.maps.MarkerImage("images/pin-2.png", null, /* size is determined at runtime */
-					null, /* origin is 0,0 */
-					null, /* anchor is bottom center of the scaled image */
-					new google.maps.Size(22, 32) //(37, 52)
-					);
+					pinIcon = new google.maps.MarkerImage(
+						"images/pin-2.png", null, null, null, new google.maps.Size(22, 32) 
+						);
 					marker.setIcon(pinIcon);
 					infowindow.setContent(this.details);
 					infowindow.open(map, this);
@@ -189,21 +227,25 @@ function setMarkers(infowindow) {
 				});
 			}
 		});
+		// We didn't find any food trucks around you since you may be out of SF.
 		if (nothingFound == true) 
-			alert("Sorry, we didn't find any food trucks around you.\nWe only supports the services within SF.");
+			alert("Sorry, we didn't find any food trucks around you.\
+			\nWe only supports the services in SF.");
 	});
 
 }
 
+/*************************************************************/
+// Change Icon from selected image to unselected one.
+/*************************************************************/
 function changeIcon(pinIcon) {
-	//console.log("changeIcon, selectedMarkerId: " + selectedMarkerId);
-	if(selectedMarkerId != -1) {
-		pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
+	//console.log("changeIcon: " + selectedMarkerId);
+	if (selectedMarkerId != -1) { // Selected marker id is valid
+		pinIcon = new google.maps.MarkerImage("images/pin-1.png", null,
 		null, /* origin is 0,0 */
 		null, /* anchor is bottom center of the scaled image */
 		new google.maps.Size(20, 30) //(35, 50)
 		);
 		markersArray[selectedMarkerId].setIcon(pinIcon);
 	}
-		
 }
