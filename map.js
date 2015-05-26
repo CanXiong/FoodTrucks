@@ -1,6 +1,6 @@
 var map;
 var markersArray = []; // global markers containers
-var selectedMarkerId = 0;
+var selectedMarkerId = -1;
 var range = 1; // default search radius is 1 mile
 var place; // user placed location
 /**** Route ****/
@@ -59,7 +59,7 @@ $(window).load(function() {
 			map.fitBounds(place.geometry.viewport);
 		} else {
 			map.setCenter(place.geometry.location);
-			map.setZoom(17); // Why 17? Because it looks good.
+			map.setZoom(16); // Why 17? Because it looks good.
 		}
 		marker.setIcon( /** @type {google.maps.Icon} */ ({
 			url: place.icon,
@@ -136,6 +136,7 @@ function withinRange(entry, place) {
 }
 
 function clearMarkers() {
+	selectedMarkerId = -1;
 	if (markersArray.length != 0) {
 		for (var i = 0; i < markersArray.length; i++) {
 			if (typeof markersArray[i] == 'object') markersArray[i].setMap(null);
@@ -184,7 +185,7 @@ function setMarkers(infowindow) {
 					marker.setIcon(pinIcon);
 					infowindow.setContent(this.details);
 					infowindow.open(map, this);
-					selectedMarkerId = i - 1; // Remember previous selected marker id
+					selectedMarkerId = i - 1; // Remember selected marker id
 				});
 			}
 		});
@@ -196,10 +197,13 @@ function setMarkers(infowindow) {
 
 function changeIcon(pinIcon) {
 	//console.log("changeIcon, selectedMarkerId: " + selectedMarkerId);
-	pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
-	null, /* origin is 0,0 */
-	null, /* anchor is bottom center of the scaled image */
-	new google.maps.Size(20, 30) //(35, 50)
-	);
-	markersArray[selectedMarkerId].setIcon(pinIcon);
+	if(selectedMarkerId != -1) {
+		pinIcon = new google.maps.MarkerImage("images/pin-1.png", null, /* size is determined at runtime */
+		null, /* origin is 0,0 */
+		null, /* anchor is bottom center of the scaled image */
+		new google.maps.Size(20, 30) //(35, 50)
+		);
+		markersArray[selectedMarkerId].setIcon(pinIcon);
+	}
+		
 }
