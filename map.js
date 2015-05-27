@@ -173,7 +173,6 @@ function rangeUpdated() {
 	}
 	infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
 	infowindow.open(map, marker);
-
 	// Found food trucks around you
 	setMarkers(infowindow);
 }
@@ -299,7 +298,7 @@ function setMarkers(infowindow) {
 		// We didn't find any food trucks around you since you may be out of SF.
 		if (nothingFound == true) 
 			alert("Sorry, we didn't find any food trucks around you.\
-			\nWe only supports the services in SF.");
+			\nOr you are outside of San Francisco.");
 	});
 
 }
